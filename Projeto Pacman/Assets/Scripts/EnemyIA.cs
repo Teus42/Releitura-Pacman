@@ -44,10 +44,12 @@ public class EnemyIA : MonoBehaviour
         
         if(_chkGhostVivo)
         {
+            this.gameObject.GetComponent<MeshCollider>().isTrigger = false;  
             Perseguir();
         }else
-        {            
-            VoltarBase();            
+        {
+            this.gameObject.GetComponent<MeshCollider>().isTrigger = true;            
+            VoltarBase();                        
         }
 
 
@@ -68,9 +70,8 @@ public class EnemyIA : MonoBehaviour
                 //Orientação para onde o fantasma deve ir para fugir do player               
                 Vector3 dirToPlayer = transform.position - _player.transform.position;
                 Vector3 newPos = transform.position + dirToPlayer;
-                _agent.SetDestination(newPos);               
+                _agent.SetDestination(newPos);            
                   
-                       
                 this.gameObject.GetComponent<MeshRenderer>().material = _medoChange;
             }
         }
@@ -86,8 +87,7 @@ public class EnemyIA : MonoBehaviour
 
     public void VoltarBase()
     {    
-        //Setar posição pra voltar 
-
+        //Setar posição pra voltar         
         _agent.SetDestination(_posInicial);        
     }
 
@@ -111,10 +111,17 @@ public class EnemyIA : MonoBehaviour
         if(_cheatOn)
         {
             if(Input.GetKeyDown(KeyCode.X)){_medo = true;}    
+            if(Input.GetKey(KeyCode.P)){_medo = true;}    
             if(Input.GetKeyUp(KeyCode.X)){_medo = false;}            
             if(Input.GetKeyDown(KeyCode.Z)){_chkGhostVivo = false;}      
+            if(Input.GetKey(KeyCode.O)){_chkGhostVivo = false;}      
             if(Input.GetKeyUp(KeyCode.Z)){_chkGhostVivo = true;}
-            if(Input.GetKeyDown(KeyCode.S)){PlayerPrefs.SetInt("highscore", 0);}  
+            if(Input.GetKeyDown(KeyCode.H))
+            {
+                PlayerPrefs.SetInt("highscore", 0);
+                PlayerMovement._pontuacao = 0;
+            } 
+             
             Debug.Log("Cheats On"); 
             cheats.SetActive(true);         
         } 

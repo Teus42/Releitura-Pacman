@@ -8,16 +8,17 @@ public class PlayerMovement : MonoBehaviour
     private GameObject player;
     private GameObject boots;
 
+    private Animator _anim;
     //Movementação
     private Rigidbody rb;
     private Vector3 move;          
-    private float speed = 4.0f;  
+    private float speed = 8.0f;  //4 normal
     private float _speedNormal;  
 
     //Vivo    
     public static bool _vivo;  
     
-    //Power Up de Comer
+    //Power Up de Comer ou BigPill
     private bool bigPillOn = false;
     private float bigPillTime = 10.0f;
     private float _bpt;
@@ -52,6 +53,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        _anim = GetComponent<Animator>();
         rb = this.GetComponent<Rigidbody>(); 
         player = this.gameObject;   
         _vivo = true;              
@@ -70,11 +72,12 @@ public class PlayerMovement : MonoBehaviour
         _pontos = point;  
 
         GameObject[] fantasmas;
-        fantasmas = GameObject.FindGameObjectsWithTag("Enemy"); 
+        fantasmas = GameObject.FindGameObjectsWithTag("Enemy");         
 
-        if(Input.GetKeyDown(KeyCode.B)){intanciarBotas();}
-
-        if(bigPillOn){bigPillTime -= 1 * Time.deltaTime;}
+        if(bigPillOn)
+        {            
+            bigPillTime -= 1 * Time.deltaTime;            
+        }
         if(bigPillTime < 0f)
         {            
             for (int i = 0; i < fantasmas.Length; i++)
@@ -83,9 +86,13 @@ public class PlayerMovement : MonoBehaviour
             }
             bigPillOn = false;
             bigPillTime = _bpt;
+        }        
+
+        if(bootsOn)
+        {
+            speed = 8f;
+            bootsTime -= 1 * Time.deltaTime;                             
         }
-        intanciarBotas();
-        if(bootsOn){bootsTime -= 1 * Time.deltaTime;}
         if(bootsTime < 0f)
         {           
             bootsOn = false;
@@ -102,63 +109,81 @@ public class PlayerMovement : MonoBehaviour
             }
             ghostOff = false;
             ghostTime = _gt;
-        }
+        }       
 
+        Tempos();
+        SpawnBotas();
+    }
+
+    private void Tempos()
+    {
         tempoBigPill.text = string.Format("{0:0}", bigPillTime); 
         tempoBoots.text = string.Format("{0:0}", bootsTime); 
         tempoGhostMedo.text = string.Format("{0:0}", ghostTime); 
     }
-
     void FixedUpdate()
     {
         if(_vivo)
         {
             rotation();
             movement(move);  
-        }      
+        }   
+
+        if(Input.GetAxis("Horizontal") > 0 || Input.GetAxis("Horizontal") < 0)
+        {
+            _anim.SetBool("isWalking", true);
+        }else if(Input.GetAxis("Vertical") > 0 || Input.GetAxis("Vertical") < 0)
+        {
+             _anim.SetBool("isWalking", true);
+        }else
+        {
+            _anim.SetBool("isWalking", false);
+        }   
     }
 
     private void movement(Vector3 dir)
     {
-        rb.MovePosition(transform.position + (dir * speed * Time.deltaTime));     
+        rb.MovePosition(transform.position + (dir * speed * Time.deltaTime));
+             
     }   
     private void rotation()
     {          
         if(Input.GetAxisRaw("Horizontal") > 0)
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, -90f);
+            transform.rotation = Quaternion.Euler(0f ,-90f,0f);
         }
         else if (Input.GetAxisRaw("Horizontal") < 0)
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, 90f);
+            transform.rotation = Quaternion.Euler(0f ,90f, 0f);
         }
         
         if (Input.GetAxisRaw ("Vertical") > 0) 
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, -180f);
+            transform.rotation = Quaternion.Euler(0f ,-180f, 0f);
         } 
         else if (Input.GetAxisRaw ("Vertical") < 0)
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, 0f);
+            transform.rotation = Quaternion.Euler(0f ,0f, 0f);
         }
          
 
         if (Input.GetAxisRaw("Horizontal") > 0 && Input.GetAxisRaw("Vertical") > 0)
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, -120f);
+            transform.rotation = Quaternion.Euler(0f ,-120f, 0f);
         } 
         if (Input.GetAxisRaw("Horizontal") > 0 && Input.GetAxisRaw("Vertical") < 0)
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, -45f);
+            transform.rotation = Quaternion.Euler(0f ,-45f, 0f);
         } 
         if (Input.GetAxisRaw("Horizontal") < 0 && Input.GetAxisRaw("Vertical") > 0)
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, 120f);
+            transform.rotation = Quaternion.Euler(0f ,120f, 0f);
         } 
         if (Input.GetAxisRaw("Horizontal") < 0 && Input.GetAxisRaw("Vertical") < 0)
         {
-            transform.rotation = Quaternion.Euler(-89.885f ,0f, 45f);
+            transform.rotation = Quaternion.Euler(0f ,45f, 0f);
         } 
+        
         
         //MEME player.transform.Rotate(-89.885f,Input.GetAxis("Horizontal")*60*Time.deltaTime,0);  
         
@@ -169,16 +194,15 @@ public class PlayerMovement : MonoBehaviour
         GameObject[] fantasmas;
         fantasmas = GameObject.FindGameObjectsWithTag("Enemy");    
 
-        if(coll.gameObject.tag == "Collect" && coll.collider.gameObject.layer == LayerMask.NameToLayer("Points"))
+        if(coll.gameObject.tag == "Points" && coll.collider.gameObject.layer == LayerMask.NameToLayer("Points"))
         {           
             point++;
-            _pontuacao += 200;         
+            _pontuacao += 100;         
             Destroy(coll.gameObject);           
         }
         if(coll.gameObject.tag == "Collect" && coll.collider.gameObject.layer == LayerMask.NameToLayer("Boots"))
         {          
-            _pontuacao += 300;
-            speed = 10f;
+            _pontuacao += 200;            
             bootsOn = true;         
             Destroy(coll.gameObject);            
         }
@@ -189,7 +213,10 @@ public class PlayerMovement : MonoBehaviour
             {
                 fantasmas[i].GetComponent<EnemyIA>().Medinho();   
             }
-            bigPillOn = true;             
+            _pontuacao += 500; 
+            bigPillTime = +_bpt; 
+            bigPillOn = true;        
+                     
             Destroy(coll.gameObject);                            
         }
         
@@ -202,22 +229,21 @@ public class PlayerMovement : MonoBehaviour
                 gameOver.SetActive(true);
 
             }else
-            {                
+            {         
+                _pontuacao += 1000;       
                 ghostOff = true;
                 coll.gameObject.GetComponent<EnemyIA>()._chkGhostVivo = false;                                                 
             }
                        
         }
     }    
-    
-    
-    private void intanciarBotas()
+    private void SpawnBotas()
     {
         Vector3[] a = new Vector3[4];
-        a [0] = new Vector3(-10.75f,3.081456f,-8.74f);
-        a [1]= new Vector3(10.75f,3.081456f,8.74f);
-        a [2]= new Vector3(-10.75f,3.081456f,8.74f);
-        a [3]= new Vector3(10.75f,3.081456f,-8.74f);
+        a [0] = new Vector3(-8.78f,1.44f,-7.33f);//C
+        a [1]= new Vector3(9.44f,1.44f,5.56f);//C
+        a [2]= new Vector3(-9.001f,1.44f,7.602f);//C
+        a [3]= new Vector3(6.02f,1.44f,-7.262f);//C
 
         int bootsPos;
         bootsPos = Random.Range(0,a.Length);
@@ -238,8 +264,7 @@ public class PlayerMovement : MonoBehaviour
                     timeSpawnBoots = _tsb;
                     _bootsSpawnOn = true;                                
                 }
-            }
-            //Debug.Log(timeSpawnBoots);
+            }            
         } 
     } 
 }
