@@ -17,4 +17,3 @@ O objetivo é sempre sobreviver por mais tempo e fazer mais pontos que na partid
 
 * **Matheus Ladislau** 
 <br>[![Twitter Follow](https://img.shields.io/twitter/url?label=Montanha&style=social&url=https%3A%2F%2Ftwitter.com%2Fteus96)](https://twitter.com/teus96)
-
