@@ -8,14 +8,9 @@ public class GameController : MonoBehaviour
 {
     /******Todos os PowerUp ficam na classse PlayerMovement******/  
     
-    public GameObject gg;
-    private GameObject _dots;
-
-    public Collider[] colliders;
-    
-    [SerializeField]
-    private float sphereRadius = 20f;
-
+    private GameObject _dots;    
+    Vector3 spawnDots = new Vector3();
+    private float spawnRange = 0.3f;
     public Text pontos;
     public Text highscore;
     private int hs;
@@ -26,6 +21,7 @@ public class GameController : MonoBehaviour
         hs = PlayerPrefs.GetInt("highscore");
         highscore.text = hs.ToString();
         _dots = (GameObject)Resources.Load("dots",typeof(GameObject));
+       
     }
     void Update()
     {
@@ -54,23 +50,25 @@ public class GameController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.R))
         {
             Continuar();           
-        }        
-           
-
-        
-        
-        SpawnDots();
+        }           
         
     }  
 
+    void FixedUpdate()
+    {
+        PosSpawn();
+        SpawnDots();
+    }
+
     public void Continuar()
     {
-        Time.timeScale = 1;
+        Time.timeScale = 1;       
         SceneManager.LoadScene("Game");
     }
     public void Menu()
     {
-        Time.timeScale = 1;
+        Time.timeScale = 1;        
+        Destroy (GameObject.Find("AudioManager"));
         SceneManager.LoadScene("Menu");
     }
 
@@ -82,65 +80,67 @@ public class GameController : MonoBehaviour
         #endif
     }
     
-    void SpawnDots()
+    void PosSpawn()
     {
-        Vector3 spawnDots = new Vector3();
+        float x = Random.Range(-10.59f,11.27f);
+        float z = Random.Range(-10.06f,10.21f);
+        spawnDots = new Vector3(x,1.2f,z); 
+    }
+    void SpawnDots()
+    {       
+
         bool spawnHere = false;     
         
         GameObject[] points;
-        points = GameObject.FindGameObjectsWithTag("Points");  
-        //GameObject[] walls;
-        //walls = GameObject.FindGameObjectsWithTag("Wall");  
-        spawnHere = PreventSpawn(spawnDots);
-        if(!spawnHere)
+        points = GameObject.FindGameObjectsWithTag("Points");        
+        spawnHere = spawnPosIsLegal(spawnDots,spawnRange);
+        
+        if(spawnHere)
         {
-            if(points.Length <= 50)
-            {   
-                float x = Random.Range(-9.26141f,10.77f);
-                float z = Random.Range(-10.86f,10.75f);
-
-                spawnDots = new Vector3(x,1.2f,z);                
-                
-                GameObject newDot = Instantiate(_dots,spawnDots,Quaternion.identity) as GameObject;                                    
-                    
-                Debug.Log("Points: "+points.Length);                 
+            if(points.Length <= 100)
+            { 
+                GameObject newDot = Instantiate(_dots,spawnDots,Quaternion.identity) as GameObject;
             }
         }       
                    
     }
 
-    
-    bool PreventSpawn(Vector3 spawnPos)
+    private bool spawnPosIsLegal(Vector3 pos, float radius)
     {
-        colliders = Physics.OverlapSphere(transform.position,sphereRadius);  
+        Collider[] colliders = Physics.OverlapSphere(pos, radius);
 
-        for (int i = 0; i < colliders.Length; i++)
+        foreach(Collider collider in colliders)
         {
-            Vector3 centerPoint = colliders[i].bounds.center;
-            float width = colliders[i].bounds.extents.x;
-            float height = colliders[i].bounds.extents.y;
-            float z = colliders[i].bounds.extents.z;
+            GameObject go = collider.gameObject;
 
-            float leftExtent = centerPoint.x - width*2;
-            float rightExtent = centerPoint.x + width*2;
-            float lowerExtent = centerPoint.y - height;
-            float upperExtent = centerPoint.y + height;
-            float zExtent = centerPoint.z - z*2;
-            float z2Extent = centerPoint.z + z*2;
-
-            if(spawnPos.x >= leftExtent && spawnPos.x <= rightExtent)
+            if (go.transform.CompareTag("Player"))
             {
-                if(spawnPos.y >= lowerExtent && spawnPos.y <= upperExtent)
-                {
-                    if(spawnPos.z >= zExtent && spawnPos.z <= z2Extent)
-                    {                    
-                        return false;
-                    }
-                }
+                return false;
             }
-        }  
+            if (go.transform.CompareTag("Map"))
+            {
+                return false;
+            }
+            if (go.transform.CompareTag("Wall"))
+            {
+                return false;
+            }
+            if (go.transform.CompareTag("Points"))
+            {
+                return false;
+            }
+        }
 
-        return true;
-    }
-    
+        return true;        
+    }   
+
+    /*public GameObject gizmosSphere;
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(gizmosSphere.transform.position,spawnRange);
+    }*/
+  
+   
 }

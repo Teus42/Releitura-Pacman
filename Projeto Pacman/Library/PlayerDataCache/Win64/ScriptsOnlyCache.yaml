@@ -5,6 +5,7 @@ ScriptsOnlyBuild:
     - EnemyIA
     - GameController
     - PlayerMovement
+    - Portal
     - UiController
     - UnityEngine.AI.NavMeshModifier
     - UnityEngine.AI.NavMeshSurface
@@ -36,7 +37,6 @@ ScriptsOnlyBuild:
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
     - UnityEditor.Graphs.AnimationStateMachine.StateNode
-    - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
     - UnityEditor.TestTools.TestRunner.TestListCacheData
@@ -93,49 +93,51 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 9784}
+      Script: {instanceID: 9786}
     - Class: 114
-      Script: {instanceID: 9814}
+      Script: {instanceID: 9816}
     - Class: 114
-      Script: {instanceID: 9840}
+      Script: {instanceID: 9842}
     - Class: 114
-      Script: {instanceID: 9846}
+      Script: {instanceID: 9848}
     - Class: 114
-      Script: {instanceID: 9990}
+      Script: {instanceID: 9992}
     - Class: 114
-      Script: {instanceID: 10118}
+      Script: {instanceID: 10120}
     - Class: 114
-      Script: {instanceID: 10196}
+      Script: {instanceID: 10198}
     - Class: 114
-      Script: {instanceID: 10362}
+      Script: {instanceID: 10364}
     - Class: 114
-      Script: {instanceID: 10378}
+      Script: {instanceID: 10380}
     - Class: 114
-      Script: {instanceID: 10428}
+      Script: {instanceID: 10430}
     - Class: 114
-      Script: {instanceID: 10876}
+      Script: {instanceID: 10880}
     - Class: 114
-      Script: {instanceID: 11340}
+      Script: {instanceID: 11344}
     - Class: 114
-      Script: {instanceID: 11368}
+      Script: {instanceID: 11372}
     - Class: 114
-      Script: {instanceID: 11566}
+      Script: {instanceID: 11570}
     - Class: 114
-      Script: {instanceID: 11684}
+      Script: {instanceID: 11688}
     - Class: 114
-      Script: {instanceID: 12322}
+      Script: {instanceID: 12326}
     - Class: 114
-      Script: {instanceID: 12452}
+      Script: {instanceID: 12456}
     - Class: 114
-      Script: {instanceID: 12512}
+      Script: {instanceID: 12516}
     - Class: 114
-      Script: {instanceID: 12660}
+      Script: {instanceID: 12664}
     - Class: 114
-      Script: {instanceID: 12776}
+      Script: {instanceID: 12780}
     - Class: 114
-      Script: {instanceID: 12802}
+      Script: {instanceID: 12806}
     - Class: 114
-      Script: {instanceID: 12968}
+      Script: {instanceID: 12972}
+    - Class: 114
+      Script: {instanceID: 41574}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -192,23 +194,23 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 9814}
+      Script: {instanceID: 9816}
     - Class: 114
-      Script: {instanceID: 10118}
+      Script: {instanceID: 10120}
     - Class: 114
-      Script: {instanceID: 10196}
+      Script: {instanceID: 10198}
     - Class: 114
-      Script: {instanceID: 10876}
+      Script: {instanceID: 10880}
     - Class: 114
-      Script: {instanceID: 11566}
+      Script: {instanceID: 11570}
     - Class: 114
-      Script: {instanceID: 11772}
+      Script: {instanceID: 11776}
     - Class: 114
-      Script: {instanceID: 12322}
+      Script: {instanceID: 12326}
     - Class: 114
-      Script: {instanceID: 12968}
+      Script: {instanceID: 12972}
     - Class: 114
-      Script: {instanceID: 66554}
+      Script: {instanceID: 12978}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -714,7 +716,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: 8d38c3c3dd0bb30db397694a7eff3046
+      Hash: 2a1b316f11dde6702a3cb65d20cf0363
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameController
@@ -828,6 +830,12 @@ ScriptsOnlyBuild:
     className: StandaloneInputModule
   - hash:
       serializedVersion: 2
+      Hash: 37eef158db2d8e41a1bffa0aaa4298ba
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: AudioManager
+  - hash:
+      serializedVersion: 2
       Hash: aa88ae22474df55295327e4ee99e5a24
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
@@ -864,10 +872,10 @@ ScriptsOnlyBuild:
     className: PlayableTrack
   - hash:
       serializedVersion: 2
-      Hash: 37eef158db2d8e41a1bffa0aaa4298ba
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: AudioManager
+    className: Portal
   platform: 19
   scenePathNames:
   - Assets/Scenes/Menu.unity

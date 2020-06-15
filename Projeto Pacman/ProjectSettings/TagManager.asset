@@ -8,6 +8,7 @@ TagManager:
   - Collect
   - Points
   - Wall
+  - Map
   layers:
   - Default
   - TransparentFX

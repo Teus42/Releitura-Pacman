@@ -52,20 +52,25 @@ public class AudioManager : MonoBehaviour
 
     public void Mute()
     {
+        AudioSource[] sources = FindObjectsOfType(typeof(AudioSource)) as AudioSource[];      
         Sound s = Array.Find(sounds, sound => sound.mute == false);
 
-        if(s.mute == false)
+        if(s.source.mute == false)
         {
-            AudioListener.volume = 0f;
-            s.mute = true;            
+            for( int index = 0 ; index < sources.Length ; ++index )
+            {
+            sources[index].mute = true;
+            }
+            s.source.mute = true;                        
+        }else
+        {
+            for( int index = 0 ; index < sources.Length ; ++index )
+            {
+            sources[index].mute = false;
+            }            
+            s.source.mute = false;                   
         }
-
-        //Mutado e Pausado a musica
-        if(s.mute == true)
-        {            
-            s.mute = false;
-            AudioListener.volume = 1f;
-        }
+               
     }
 
    

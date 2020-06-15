@@ -7,20 +7,23 @@ public class PlayerMovement : MonoBehaviour
 {
     private GameObject player;
     private GameObject boots;
+    private GameObject bigPill;
 
     private Animator _anim;
     //Movementação
     private Rigidbody rb;
     private Vector3 move;          
-    private float speed = 8.0f;  //4 normal
+    private float speed = 4.0f;  //4 normal
     private float _speedNormal;  
 
     //Vivo    
     public static bool _vivo;  
     
-    //Power Up de Comer ou BigPill
+    //Power Up de Comer/BigPill
+    private GameObject chkPill;
     private bool bigPillOn = false;
     private float bigPillTime = 10.0f;
+    private float timeSpawnBigPill = 10.0f;
     private float _bpt;
 
     //Power Up de Correr
@@ -45,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
 
     //Tela de GameOver
     public GameObject gameOver;
+    public static bool _gameOver;
 
     //Txt de tempo na hud
     public Text tempoBigPill;
@@ -56,13 +60,16 @@ public class PlayerMovement : MonoBehaviour
         _anim = GetComponent<Animator>();
         rb = this.GetComponent<Rigidbody>(); 
         player = this.gameObject;   
-        _vivo = true;              
+        _vivo = true;   
+        _gameOver = false;           
         _speedNormal = speed;
         _bt = bootsTime;
         _gt = ghostTime;
         _bpt = bigPillTime;
         _tsb = timeSpawnBoots;
+        _pontuacao = 0;
         boots = (GameObject)Resources.Load("runBoots", typeof (GameObject));
+        bigPill = (GameObject)Resources.Load("BigPill", typeof (GameObject));
     }
 
     void Update()
@@ -113,6 +120,7 @@ public class PlayerMovement : MonoBehaviour
 
         Tempos();
         SpawnBotas();
+        SpawnPill();
     }
 
     private void Tempos()
@@ -191,20 +199,22 @@ public class PlayerMovement : MonoBehaviour
     }
     void OnCollisionEnter(Collision coll)
     {       
-        GameObject[] fantasmas;
-        fantasmas = GameObject.FindGameObjectsWithTag("Enemy");    
-
+        GameObject[] fantasmas;      
+        fantasmas = GameObject.FindGameObjectsWithTag("Enemy");  
+          
         if(coll.gameObject.tag == "Points" && coll.collider.gameObject.layer == LayerMask.NameToLayer("Points"))
         {           
             point++;
-            _pontuacao += 100;         
-            Destroy(coll.gameObject);           
+            _pontuacao += 100;  
+            Destroy(coll.gameObject);      
+            FindObjectOfType<AudioManager>().Play("Dots");    
         }
         if(coll.gameObject.tag == "Collect" && coll.collider.gameObject.layer == LayerMask.NameToLayer("Boots"))
         {          
             _pontuacao += 200;            
             bootsOn = true;         
-            Destroy(coll.gameObject);            
+            Destroy(coll.gameObject);  
+            FindObjectOfType<AudioManager>().Play("bota");              
         }
 
         if(coll.gameObject.tag == "Collect" && coll.collider.gameObject.layer == LayerMask.NameToLayer("BigPill"))
@@ -213,37 +223,46 @@ public class PlayerMovement : MonoBehaviour
             {
                 fantasmas[i].GetComponent<EnemyIA>().Medinho();   
             }
-            _pontuacao += 500; 
+           
+            _pontuacao += 400; 
             bigPillTime = +_bpt; 
-            bigPillOn = true;        
-                     
-            Destroy(coll.gameObject);                            
+            bigPillOn = true;
+            Destroy(coll.gameObject); 
+            FindObjectOfType<AudioManager>().Play("Dots");                               
         }
         
         if(coll.gameObject.tag == "Enemy")
         {   
             if(!bigPillOn)
             {      
-                _vivo = false; 
+                _vivo = false;   
+                _gameOver = true;  
                 Destroy(this.gameObject);
                 gameOver.SetActive(true);
+                FindObjectOfType<AudioManager>().Play("mortePacman");  
 
             }else
             {         
-                _pontuacao += 1000;       
+                _pontuacao += 700;       
                 ghostOff = true;
-                coll.gameObject.GetComponent<EnemyIA>()._chkGhostVivo = false;                                                 
+                coll.gameObject.GetComponent<EnemyIA>()._chkGhostVivo = false;     
+                FindObjectOfType<AudioManager>().Play("morteGhost");                                                                   
             }
                        
         }
     }    
+    void OnDrawnGizmos()
+    {        
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position,20f);
+    }
     private void SpawnBotas()
     {
         Vector3[] a = new Vector3[4];
-        a [0] = new Vector3(-8.78f,1.44f,-7.33f);//C
-        a [1]= new Vector3(9.44f,1.44f,5.56f);//C
-        a [2]= new Vector3(-9.001f,1.44f,7.602f);//C
-        a [3]= new Vector3(6.02f,1.44f,-7.262f);//C
+        a [0] = new Vector3(-8.713f,1.44f,-8.833f);//x
+        a [1]= new Vector3(10.139f,1.44f,4.662f);//x
+        a [2]= new Vector3(-6.74f,1.44f,4.642f);//x
+        a [3]= new Vector3(4.8f,1.44f,-6.37f);//x
 
         int bootsPos;
         bootsPos = Random.Range(0,a.Length);
@@ -263,6 +282,39 @@ public class PlayerMovement : MonoBehaviour
                     chkBoots = Instantiate(boots,a[bootsPos],Quaternion.identity);
                     timeSpawnBoots = _tsb;
                     _bootsSpawnOn = true;                                
+                }
+            }            
+        } 
+    } 
+    private void SpawnPill()
+    {
+        Vector3[] a = new Vector3[7];
+        a [0] = new Vector3(8.98f,1.195f,-8.86f);//x
+        a [1]= new Vector3(-6.73f,1.195f,-4.75f);//x
+        a [2]= new Vector3(-10.54f,1.195f,4.85f);//x
+        a [3]= new Vector3(6.91f,1.195f,4.74f);//x
+        a [4]= new Vector3(0f,1.195f,-2.33f);//x
+        a [5]= new Vector3(0f,1.195f,4.85f);//x
+        a [6]= new Vector3(6.31f,1.195f,-2.57f);//x
+
+        int pillPos;
+        pillPos = Random.Range(0,a.Length);
+
+        bool _pillSpawnOn = false;
+        
+        if(GameObject.Find("BigPill(Clone)"))
+        {          
+           _pillSpawnOn = false;
+        }else
+        {
+            if(!_pillSpawnOn)
+            {
+                timeSpawnBoots -= 1 * Time.deltaTime;
+                if(timeSpawnBoots <0f)
+                {
+                    chkBoots = Instantiate(bigPill,a[pillPos],Quaternion.identity);
+                    timeSpawnBoots = _tsb;
+                    _pillSpawnOn = true;                                
                 }
             }            
         } 

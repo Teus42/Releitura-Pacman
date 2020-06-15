@@ -21,8 +21,8 @@ public class EnemyIA : MonoBehaviour
 
     //Materiais para mudar as cores dos fantasmas
     private Material _medoChange;
-    private Material _ghostColor;
-    
+    private Material _morte;
+    private Material _ghostColor;   
     public GameObject cheats;
     void Start()
     {
@@ -34,8 +34,9 @@ public class EnemyIA : MonoBehaviour
 
         _posInicial = this.gameObject.transform.position;
         _ghostColor = this.gameObject.GetComponent<MeshRenderer>().material;
+
         _medoChange = (Material)Resources.Load("Medo", typeof(Material));
-       
+        _morte = (Material)Resources.Load("Dead", typeof(Material)); 
     }
     void Update()
     {
@@ -48,14 +49,14 @@ public class EnemyIA : MonoBehaviour
             Perseguir();
         }else
         {
-            this.gameObject.GetComponent<MeshCollider>().isTrigger = true;            
+            this.gameObject.GetComponent<MeshCollider>().isTrigger = true;
+            this.gameObject.GetComponent<MeshRenderer>().material = _morte;            
             VoltarBase();                        
-        }
-
-
-        rx();             
+        }      
+        
+        rx();   
+        if(PlayerMovement._gameOver==true){cheats.SetActive(false);}          
     }
-
     public void Perseguir()
     {
         if(_chkPlayerVivo)
@@ -90,7 +91,6 @@ public class EnemyIA : MonoBehaviour
         //Setar posição pra voltar         
         _agent.SetDestination(_posInicial);        
     }
-
     private bool _cheatOn = false;
     private void rx()
     {
@@ -120,9 +120,8 @@ public class EnemyIA : MonoBehaviour
             {
                 PlayerPrefs.SetInt("highscore", 0);
                 PlayerMovement._pontuacao = 0;
-            } 
-             
-            Debug.Log("Cheats On"); 
+            }             
+            
             cheats.SetActive(true);         
         } 
     }
